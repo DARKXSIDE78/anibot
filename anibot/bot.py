@@ -110,6 +110,25 @@ from ..utils.data_parser import (
     RECOMMENDTIONS_QUERY,
 )
 from .anilist import auth_link_cmd, code_cmd, logout_cmd
+from flask import Flask
+
+flask_app = Flask(__name__)
+
+# Create a health check route
+@flask_app.route("/health")
+def health_check():
+    return "OK", 200
+
+# Run Flask app in a separate thread so it doesn't block the main bot process
+import threading
+
+def run_flask():
+    flask_app.run(host='0.0.0.0', port=8000)
+
+# Start the Flask app in a separate thread
+flask_thread = threading.Thread(target=run_flask)
+flask_thread.daemon = True
+flask_thread.start()
 
 USERS = get_collection("USERS")
 GROUPS = get_collection("GROUPS")
