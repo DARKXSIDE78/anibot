@@ -17,7 +17,7 @@ OWNER = list(filter(lambda x: x, map(int, os.environ.get("OWNER_ID", "1005170481
 DOWN_PATH = "anibot/downloads/"
 HELP_DICT = dict()
 
-session = ClientSession()
+session = None
 plugins = dict(root="anibot/plugins")
 anibot = Client("anibot", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH, plugins=plugins)
 
