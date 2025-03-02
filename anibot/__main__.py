@@ -18,30 +18,29 @@ async def main():
     _close_db()
     await session.close()
 
-from flask import Flask
+from aiohttp import web
 
-flask_app = Flask(__name__)
+routes = web.RouteTableDef()
 
-# Create a health check route
-@flask_app.route("/health")
-def health_check():
-    return "OK", 200
+@routes.get("/", allow_head=True)
+async def root_route_handler(request):
+    return web.json_response("DARKXSIDE78 - The darkness shall follow my command")
 
-# Custom route to display your message
-@flask_app.route("/")
-def home():
-    return "DARKXSIDE78 - The darkness shall follow my command", 200
+@routes.get("/health", allow_head=True)
+async def health_check(request):
+    return web.json_response({"status": "OK"})
 
-# Run Flask app in a separate thread so it doesn't block the main bot process
-import threading
+async def web_server():
+    web_app = web.Application(client_max_size=30000000)
+    web_app.add_routes(routes)
+    runner = web.AppRunner(web_app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 8000)
+    await site.start()
+    print("Web server started at http://0.0.0.0:8000")
 
-def run_flask():
-    flask_app.run(host='0.0.0.0', port=8000)
+async def run_all():
+    await asyncio.gather(main(), web_server())
 
-# Start the Flask app in a separate thread
-flask_thread = threading.Thread(target=run_flask)
-flask_thread.daemon = True
-flask_thread.start()
-
-
-asyncio.get_event_loop().run_until_complete(main())
+if __name__ == "__main__":
+    asyncio.run(run_all())
