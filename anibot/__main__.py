@@ -27,6 +27,11 @@ flask_app = Flask(__name__)
 def health_check():
     return "OK", 200
 
+# Custom route to display your message
+@flask_app.route("/")
+def home():
+    return "DARKXSIDE78 - The darkness shall follow my command", 200
+
 # Run Flask app in a separate thread so it doesn't block the main bot process
 import threading
 
